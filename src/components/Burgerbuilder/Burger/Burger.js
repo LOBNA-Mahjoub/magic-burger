@@ -9,11 +9,20 @@ const burger = (props) => {
     for (let ingredient of props.ingredientsProps)
         for (let i = 0; i < ingredient.count; i++)
             IngredientsComponents.push(<Ingredients type={ingredient.label}
-                ajouter={props.ajouter(ingredient.label)} />)
+                key={ingredient.id + "-" + i}
+
+
+
+            />)
+    let message = null
+    if (IngredientsComponents.length === 0)
+        message = <p> Please start adding ingredients !!</p>
+
 
     return (
         <div className={classes.Burger}>
             <Ingredients type='bread-top' />
+            {message}
             {IngredientsComponents}
             <Ingredients type='bread-bottom' />
         </div>

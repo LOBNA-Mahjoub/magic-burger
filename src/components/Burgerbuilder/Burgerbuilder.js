@@ -6,22 +6,26 @@ class Burgerbuilder extends Component {
     state = {
         ingredients: [
             {
+                id: 1,
                 label: 'salad',
                 count: 0,
                 price: 1
             },
             {
+                id: 2,
                 label: 'meat',
                 count: 0,
                 price: 3
 
             },
             {
+                id: 3,
                 label: 'cheese',
                 count: 0,
                 price: 2
             },
             {
+                id: 4,
                 label: 'escalope',
                 count: 0,
                 price: 2
@@ -29,31 +33,39 @@ class Burgerbuilder extends Component {
 
 
         ],
-        priceTotal: 4
+        totalPrice: 4
 
     }
 
-    ajouterUnIngredient = (label) => {
-         let newINgredients = this.state.ingredients.map((item) => { if (item.label === label) { item.count++ } })
-        console.log(newINgredients)
-        this.setState({ ingredients: newINgredients })
-      
+    // ajouterUnIngredient = (label) => {
+    //   let newINgredients = this.state.ingredients.map((item) => { if (item.label === label) { item.count++ } })
+    // console.log(newINgredients)
+    //this.setState({ ingredients: newINgredients })
+    //}
+
+    addOrRemoveIngredientHandler = (id, action) => {
+        const newINgredients = [...this.state.ingredients]
+        let  newTotalPrice = this.state.totalPrice
+        const index = newINgredients.findIndex((ingredient) => {
+            return ingredient.id === id
+        })
+        if (action === "add") {
+            newINgredients[index].count++
+            newTotalPrice += newINgredients[index].price
 
 
+        } else if (action === "remove") {
+            newINgredients[index].count--
+            newTotalPrice -= newINgredients[index].price
+        }
 
+        this.setState(
+            { ingredients: newINgredients,
+                totalPrice: newTotalPrice
+            
+            }
+        )
 
-    }
-
-    supprimerUnIngredient = () => {
-        if (this.state.count < 1)
-            console.log("Impossible de supprimer cet ingredient !!")
-        else
-            this.setState(
-                {
-                    count: this.state.count - 1,
-
-                }
-            )
     }
 
 
@@ -69,8 +81,10 @@ class Burgerbuilder extends Component {
                 />
                 <BuildControls
                     ingredientsProps={this.state.ingredients}
-                    price={this.state.priceTotal}
-                    ajouter={this.ajouterUnIngredient(label)}
+                    price={this.state.totalPrice}
+                    // ajouter={this.ajouterUnIngredient(label)}
+                    addOrRemoveIngredient={this.addOrRemoveIngredientHandler}
+                  
 
 
 
