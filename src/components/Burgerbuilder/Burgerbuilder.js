@@ -2,50 +2,99 @@ import React, { Component } from 'react'
 import Burger from './Burger/Burger'
 import BuildControls from './BuildControls/BuildControls'
 import buildcontrol from './BuildControls/BuildContol/BuildControl'
+import axios from '../../utils/axios'
+import Modal from './Modal/Modal'
+import OrderSummary from './OrderSummary/OrderSummary'
 class Burgerbuilder extends Component {
+    constructor(props) {
+        super(props)
+        console.log('[constructor]')
+    }
     state = {
         ingredients: [
-            {
-                id: 1,
-                label: 'salad',
-                count: 0,
-                price: 1
-            },
-            {
-                id: 2,
-                label: 'meat',
-                count: 0,
-                price: 3
-
-            },
-            {
-                id: 3,
-                label: 'cheese',
-                count: 0,
-                price: 2
-            },
-            {
-                id: 4,
-                label: 'escalope',
-                count: 0,
-                price: 2
-            }
 
 
         ],
-        totalPrice: 4
+        totalPrice: 0
+
+    }
+    componentDidMount() {
+        this.getIngredientsFromServer()
+        console.log('[componentDidMount]')
+
 
     }
 
+    componentDidUpdate() {
+        console.log('[componentDidUpdate]')
+    }
+
+
+    getIngredientsFromServer = () => {
+        axios.get('ingredients')
+            .then((response) => {
+
+                console.log(response.data.ingredients)
+                let newINgredients = response.data.ingredients.map((item) => {
+                    item.price = item.price * 3
+                    return item
+
+                })
+
+
+
+                this.setState({
+                    ingredients: response.data.ingredients
+                })
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
+    getBasicPricesFromServer = () => {
+        axios.get('basicPrice')
+            .then((response) => {
+
+                console.log(response.data.basicPrice)
+
+
+
+
+                this.setState({
+                    totalPrice: response.data.basicPrice
+                })
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
+    postMyOrderToServer = () => {
+        axios.post('burger', { burger: this.state.ingredients })
+            .then((response) => {
+
+                console.log(response)
+
+
+
+
+
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
+
+
+
     // ajouterUnIngredient = (label) => {
     //   let newINgredients = this.state.ingredients.map((item) => { if (item.label === label) { item.count++ } })
-    // console.log(newINgredients)
+    //console.log(newINgredients)
     //this.setState({ ingredients: newINgredients })
     //}
 
     addOrRemoveIngredientHandler = (id, action) => {
         const newINgredients = [...this.state.ingredients]
-        let  newTotalPrice = this.state.totalPrice
+        let newTotalPrice = this.state.totalPrice
         const index = newINgredients.findIndex((ingredient) => {
             return ingredient.id === id
         })
@@ -60,16 +109,39 @@ class Burgerbuilder extends Component {
         }
 
         this.setState(
-            { ingredients: newINgredients,
+            {
+                ingredients: newINgredients,
                 totalPrice: newTotalPrice
-            
+
             }
         )
 
     }
+    getLastBurgerFromServer = () => {
+        axios.get('lastBurger')
+            .then((response) => {
+
+
+                let newINgredients = response.data.burger.map((item) => {
+                    item.price = item.price * 3
+                    return item
+
+                })
+
+
+
+                this.setState({
+                    ingredients: newINgredients
+                })
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
 
 
     render() {
+        console.log(['render'])
 
 
         return (
@@ -82,15 +154,13 @@ class Burgerbuilder extends Component {
                 <BuildControls
                     ingredientsProps={this.state.ingredients}
                     price={this.state.totalPrice}
-                    // ajouter={this.ajouterUnIngredient(label)}
+                    //ajouter={this.ajouterUnIngredient(label)}
                     addOrRemoveIngredient={this.addOrRemoveIngredientHandler}
-                  
-
-
-
-
-
+                    postMyOrderToServer={this.postMyOrderToServer}
                 />
+                <Modal>
+                    <OrderSummary />
+                </Modal>
             </div>
         )
     }

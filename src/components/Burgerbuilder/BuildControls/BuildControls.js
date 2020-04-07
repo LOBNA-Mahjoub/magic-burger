@@ -10,6 +10,7 @@ const buildcontrols = (props) => {
             removed={() => { props.addOrRemoveIngredient(ingredient.id, "remove") }}
             key={ingredient.id}
             disableRemoving={ingredient.count === 0}
+
         // ajouter={props.ajouter(label)} 
         />
     })
@@ -20,7 +21,7 @@ const buildcontrols = (props) => {
 
             {buildcontrolsList}
 
-            <button className={classes.OrderButton}>order now </button>
+            <button className={classes.OrderButton} onClick={props.postMyOrderToServer}>order now </button>
         </div >
     )
 
